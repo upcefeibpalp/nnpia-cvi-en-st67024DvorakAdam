@@ -1,0 +1,98 @@
+ChatGPT:
+
+Ukaž mi jak do build.gradle přidám dependency Spring Boot DevTools.
+
+ChatGPT řekl:
+Pro přidání závislosti Spring Boot DevTools do souboru build.gradle, postupujte následovně:
+
+Pokud používáte Gradle s Groovy DSL, přidejte následující řádek do sekce dependencies ve vašem souboru build.gradle:
+
+dependencies {
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // další závislosti
+}
+
+
+OVĚŘENO: https://start.spring.io/
+    dependencies {
+      implementation 'org.springframework.boot:spring-boot-starter'
+      developmentOnly 'org.springframework.boot:spring-boot-devtools'
+      testImplementation 'org.springframework.boot:spring-boot-starter-test'
+      testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
+
+
+
+========================================================================================================================
+ChatGPT:
+
+Já jsem napsal:
+
+K čemu slouží závislost Spring Boot DevTools?
+Jaká je její největší výhoda?
+
+ChatGPT řekl:
+
+Spring Boot DevTools je nástroj, který výrazně zjednodušuje vývoj aplikací ve Spring Bootu. Je navržen tak, aby urychlil vývoj a zlepšil produktivitu při práci na projektech. Hlavní výhody a funkcionality této závislosti jsou:
+
+Největší výhody:
+Automatické restartování aplikace:
+    DevTools umožňuje automatické restartování aplikace při změnách v souborech (např. ve zdrojových kódech nebo konfiguracích). To znamená, že když upravíte soubor a uložíte ho, Spring Boot aplikace se automaticky restartuje bez potřeby ručního zásahu. Tato funkcionalita je obzvlášť užitečná při vývoji, protože odpadá potřeba každého spuštění aplikace po každé změně.
+
+LiveReload:
+    DevTools má LiveReload integraci, což znamená, že můžete změnit HTML, CSS nebo jiné související soubory a prohlížeč se automaticky aktualizuje, čímž se zrychluje proces vývoje front-endu bez nutnosti ručního obnovování stránky.
+
+Podpora pro rychlé připojení a ladění:
+    DevTools usnadňuje připojení k běžící aplikaci pomocí debuggeru a poskytuje lepší diagnostiku, což umožňuje efektivní ladění a testování.
+
+Vypnutí cache a optimalizací:
+    Pro vývojové prostředí DevTools automaticky vypne některé optimalizace a cache, které by mohly zdržovat proces vývoje (například cache šablon nebo komponent).
+
+Zvýšená bezpečnost:
+    Pokud je DevTools povolený, zabezpečuje aplikaci před nasazením v produkci tím, že ve výchozím nastavení je DevTools deaktivován při nasazení na produkci, čímž se snižuje riziko jeho zneužití.
+
+K čemu to slouží?
+    DevTools je určen pro zjednodušení a zrychlení vývojového procesu. Usnadňuje práci s aplikací v průběhu vývoje a umožňuje testerům a vývojářům efektivně reagovat na změny v kódu. Díky automatickému restartování, LiveReload a lepší diagnostice se můžete více soustředit na samotný vývoj, místo na opakované manuální spouštění nebo aktualizaci aplikace.
+
+Shrnutí:
+    Největší výhoda Spring Boot DevTools spočívá v automatickém restartování aplikace a LiveReload, což výrazně zrychluje cyklus vývoje a testování změn bez nutnosti ručního zásahu.
+
+
+========================================================================================================================
+ChatGPT:
+
+Já jsem napsal chatbotovi:
+
+Upravte endpoint /user aby přijal ID uživatele jako Query parameter (/user?id=1) a vrátí odpovídající instanci třídy User.
+Otestujte endpoint pomocí Postmanu.
+Upravte endpoint /user aby přijal ID uživatele jako Path parameter (/user/{id}) a vrátí odpovídající instanci třídy User.
+Otestujte endpoint pomocí Postmanu.
+Po ověřené funkčnosti přepište adresu endpointu /users vracející všechny uživatele na /user.
+Otestujte endpoint pomocí Postmanu
+
+
+
+package cz.upce.fei.nnpiacv.controller;
+
+import cz.upce.fei.nnpiacv.service.UserService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class UserController {
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/user")
+    public String findUser() {
+        return userService.findUser();
+    }
+
+    @GetMapping("/users")
+    public String findusers(){
+        return userService.findUsers().toString();
+    }
+}
