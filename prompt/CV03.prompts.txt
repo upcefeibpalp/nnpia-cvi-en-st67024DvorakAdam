@@ -1,0 +1,92 @@
+CHATGPT
+
+Někdy se dostanete do situace kdy budete potřebovat vědět jaké SQL dotazy se posílají do databáze. Upravte application.properties tak aby logovala SQL dotazy.
+
+logging.level.root = INFO
+spring.application.name=nnpiacv
+
+server.port=9000
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/nnpia
+spring.datasource.username=nnpia
+spring.datasource.password=nnpia
+
+spring.jpa.hibernate.ddl-auto=update
+
+ODPOVĚĎ:
+# Logování SQL dotazů
+spring.jpa.show-sql = true
+spring.jpa.properties.hibernate.format_sql = true
+logging.level.org.hibernate.SQL = DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder = TRACE
+
+====================================================
+
+ Teoretické úkoly AI
+Zjištěte všechny hodnoty vlastnosti spring.jpa.hibernate.ddl-auto a co tyto hodnoty znamenají.
+K čemu slouží anotace @GeneratedValue a jakých hodnoto může nabývat parametr stragety.
+K čemu slouží anotace @Column.
+K čemu slouží anotace @Transactional.
+K čemu slouží anotace @Query.
+K čemu slouží anotace @JsonIgnore.
+
+1. Vlastnost spring.jpa.hibernate.ddl-auto
+Tato vlastnost určuje, jak bude Hibernate spravovat schéma databáze při spuštění aplikace. Může mít následující hodnoty:
+
+none: Hibernate nebude upravovat schéma databáze.
+update: Hibernate se pokusí automaticky upravit schéma databáze podle entit ve vaší aplikaci (např. přidá nové tabulky, sloupce apod.). Tato hodnota je vhodná pro vývoj.
+create: Hibernate vytvoří nové schéma databáze při každém spuštění aplikace (smaže všechna existující data a vytvoří novou strukturu).
+create-drop: Podobné jako create, ale schéma se po ukončení aplikace odstraní.
+validate: Hibernate pouze ověří, že schéma databáze odpovídá entitám. Pokud nalezne nesoulad, vyhodí výjimku.
+Tato vlastnost se používá pro správu databázového schématu a je užitečná při vývoji a testování.
+
+2. Anotace @GeneratedValue
+Anotace @GeneratedValue se používá k automatickému generování hodnoty pro primární klíč entity při jejím vložení do databáze. Je to běžně používané pro auto-generované hodnoty, jako je například sekvenční číslování primárních klíčů.
+
+Parametr strategy určuje způsob generování hodnoty. Může nabývat následujících hodnot:
+
+GenerationType.AUTO: Výběr generování hodnoty je ponechán na Hibernate nebo poskytovateli databáze. Bude se používat metoda, která je pro danou databázi nejvhodnější.
+GenerationType.IDENTITY: Používá se pro auto-increment primární klíče. Hodnota je generována databází (například pro MySQL nebo PostgreSQL).
+GenerationType.SEQUENCE: Používá sekvenci (např. PostgreSQL nebo Oracle). Sekvence je předem definovaný způsob generování čísel.
+GenerationType.TABLE: Používá speciální tabulku pro uchování hodnoty generované pro primární klíč (nejméně efektivní metoda, obvykle se nepoužívá).
+3. Anotace @Column
+Anotace @Column se používá k mapování vlastnosti (atributu) entity na konkrétní sloupec v databázové tabulce. Můžete ji použít k specifikaci různých parametrů sloupce, například:
+
+name: Určuje název sloupce v databázi.
+nullable: Určuje, zda může být hodnota sloupce NULL.
+unique: Určuje, zda je hodnota sloupce jedinečná v rámci tabulky.
+length: Umožňuje nastavit délku sloupce pro řetězce (např. VARCHAR).
+Tato anotace je užitečná pro jemné ladění mapování entit a přizpůsobení struktury tabulek podle potřeb aplikace.
+
+4. Anotace @Transactional
+Anotace @Transactional se používá pro označení metod nebo tříd, které mají být prováděny v rámci transakce. To znamená, že pokud se v průběhu metody objeví nějaká chyba, všechny změny provedené v databázi budou vráceny zpět (rollback).
+
+Použití:
+
+Pokud je anotace aplikována na metodu, metoda bude automaticky spuštěna v transakci.
+Pokud je aplikována na třídu, všechny metody v této třídě budou prováděny v rámci transakce.
+Můžete specifikovat úroveň izolace nebo propagaci transakcí.
+5. Anotace @Query
+Anotace @Query je součástí Spring Data JPA a slouží k definování vlastních dotazů (SQL nebo JPQL) na úrovni metody v repository (úložiště). To umožňuje vytvářet složité dotazy, které nelze jednoduše definovat pomocí názvů metod.
+
+Příklad použití:
+
+java
+Zkopírovat
+@Query("SELECT u FROM User u WHERE u.age > :age")
+List<User> findUsersOlderThan(@Param("age") int age);
+Tato anotace umožňuje efektivní a flexibilní práci s databázovými dotazy.
+
+6. Anotace @JsonIgnore
+Anotace @JsonIgnore je součástí knihovny Jackson a slouží k označení polí nebo metod, které mají být ignorovány při serializaci a deserializaci JSON objektů. To znamená, že tato pole nebudou zahrnuta v JSON výstupu.
+
+Použití:
+
+java
+Zkopírovat
+@JsonIgnore
+private String password;
+V tomto příkladu bude atribut password ignorován při převodu objektu na JSON, což je užitečné pro citlivé údaje, které nechcete, aby se dostaly do výstupu.
+
+//OVĚŘENO:
+https://www.geeksforgeeks.org/hibernate-generatedvalue-annotation-in-jpa/
