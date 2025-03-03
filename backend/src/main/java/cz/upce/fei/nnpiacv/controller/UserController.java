@@ -6,6 +6,7 @@ import cz.upce.fei.nnpiacv.dto.UserResponseDto;
 import cz.upce.fei.nnpiacv.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,7 +55,7 @@ public class UserController {
         );
 
          */
-        return ResponseEntity.status(201).body(
+        return ResponseEntity.status(HttpStatus.CREATED).body(
                 UserResponseDto.builder().id(createdUser.getId())
                         .password(createdUser.getPassword())
                         .email(createdUser.getEmail())
@@ -68,6 +69,31 @@ public class UserController {
         userService.deleteUser(id);
         return null;
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserRequestDto userRequestDto) {
+        log.info("request for updating user with id {} obtained, new data: {}", id, userRequestDto);
+
+        // Převeďte DTO na entitu User
+        User userToUpdate = new User(userRequestDto.getEmail(), userRequestDto.getPassword());
+
+        // Zavolejte metodu service pro aktualizaci
+        User updatedUser = userService.updateUser(id, userToUpdate);
+
+        if (updatedUser == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with id " + id + " not found.");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                UserResponseDto.builder()
+                        .id(updatedUser.getId())
+                        .email(updatedUser.getEmail())
+                        .password(updatedUser.getPassword())
+                        .build()
+        );
+    }
+
+
 
     /*
     //Původní endpoint users

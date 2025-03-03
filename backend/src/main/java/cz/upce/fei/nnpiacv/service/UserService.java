@@ -39,6 +39,28 @@ public class UserService {
         userRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    // Nová metoda pro aktualizaci uživatele
+    public User updateUser(Long id, User updatedUserData) {
+        Optional<User> existingUserOpt = userRepository.findById(id);
+
+        if (existingUserOpt.isEmpty()) {
+            return null;  // Pokud uživatel neexistuje, vrátíme null
+        }
+
+        User existingUser = existingUserOpt.get();
+
+        // Aktualizujeme pouze požadované atributy
+        if (updatedUserData.getEmail() != null) {
+            existingUser.setEmail(updatedUserData.getEmail());
+        }
+        if (updatedUserData.getPassword() != null) {
+            existingUser.setPassword(updatedUserData.getPassword());
+        }
+
+        // Uložíme aktualizovaného uživatele zpět do databáze
+        return userRepository.save(existingUser);
+    }
 /*
     public User findUserById(Long id) {
         return users.get(id);
