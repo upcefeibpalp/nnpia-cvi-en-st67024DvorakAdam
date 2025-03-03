@@ -1,9 +1,6 @@
 package cz.upce.fei.nnpiacv.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @AllArgsConstructor
@@ -13,9 +10,12 @@ import lombok.*;
 //@ToString
 @Entity
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "app_user")
 public class User {
     @Id
+    @NonNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(unique = true)
     private String email;
@@ -23,5 +23,10 @@ public class User {
 
     public Long getId() {
         return id;
+    }
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 }

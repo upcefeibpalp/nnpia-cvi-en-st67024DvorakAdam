@@ -1,12 +1,13 @@
 package cz.upce.fei.nnpiacv.controller;
 
 import cz.upce.fei.nnpiacv.domain.User;
+import cz.upce.fei.nnpiacv.dto.UserRequestDto;
+import cz.upce.fei.nnpiacv.dto.UserResponseDto;
 import cz.upce.fei.nnpiacv.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +15,8 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
+@Slf4j
+@RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
 
@@ -35,9 +38,35 @@ public class UserController {
     */
 
     //treti verze
-    @GetMapping("/user/{id}")
+    @GetMapping
     public User findUser(@PathVariable("id") Long id) {
         return userService.findUser(id);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createUser(@RequestBody UserRequestDto user) {
+        log.info("request for creating user obtained {}", user);
+
+        User createdUser = userService.createUser(new User(user.getEmail(), user.getPassword()));
+        /*return ResponseEntity.status(201).body(
+                new UserResponseDto(createdUser.getId(), createdUser.getEmail(),
+                        createdUser.getPassword())
+        );
+
+         */
+        return ResponseEntity.status(201).body(
+                UserResponseDto.builder().id(createdUser.getId())
+                        .password(createdUser.getPassword())
+                        .email(createdUser.getEmail())
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        log.info("request for deleting user with id {} obtained", id);
+        userService.deleteUser(id);
+        return null;
     }
 
     /*
@@ -47,7 +76,7 @@ public class UserController {
         return userService.findUsers().toString();
     }
      */
-
+/*
     // Přepsaný endpoint pro vrácení všech uživatelů
     @GetMapping("/users")
     public Collection<? extends Object> findUsers(@RequestParam(required = false) String email) {
@@ -62,4 +91,6 @@ public class UserController {
             }
         }
     }
+
+ */
 }
