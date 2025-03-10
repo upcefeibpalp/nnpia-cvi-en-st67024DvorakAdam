@@ -1,8 +1,8 @@
 package cz.upce.fei.nnpiacv.service;
 
 import cz.upce.fei.nnpiacv.domain.User;
+import cz.upce.fei.nnpiacv.exceptions.*;
 import cz.upce.fei.nnpiacv.repository.UserRepository;
-import cz.upce.fei.nnpiacv.exceptions.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +40,10 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        // Zkontrolujeme, zda uživatel s tímto emailem již existuje
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new UserAlreadyExistsException(user.getEmail());
+        }
         return userRepository.save(user);
     }
 

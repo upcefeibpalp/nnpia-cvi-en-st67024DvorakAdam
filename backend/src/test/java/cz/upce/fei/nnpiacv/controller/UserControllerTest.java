@@ -1,9 +1,13 @@
 package cz.upce.fei.nnpiacv.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.upce.fei.nnpiacv.domain.User;
-import cz.upce.fei.nnpiacv.exceptions.UserNotFoundException;
+import cz.upce.fei.nnpiacv.dto.UserRequestDto;
+import cz.upce.fei.nnpiacv.exceptions.*;
 import cz.upce.fei.nnpiacv.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -12,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
@@ -52,16 +57,63 @@ class UserControllerTest {
     }
 
 
-    @Test
-    void createUser() {
+    @InjectMocks
+    private UserController userController;
+
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    public void setup() {
+        objectMapper = new ObjectMapper();
     }
 
     @Test
-    void deleteUser() {
+    void createUser() throws Exception {
+        // Arrange - připravíme mock uživatele a jeho DTO
+        UserRequestDto userRequestDto = new UserRequestDto("test@example.com", "password123");
+
+        // Create a mock User entity
+        User mockUser = new User();
+        mockUser.setId(1L);
+        mockUser.setEmail("test@example.com");
+        mockUser.setPassword("password123");
+
+        // Mock the userService to return the mock User entity
+        when(userService.createUser(any(User.class))).thenReturn(mockUser);
+
+        // Convert userRequestDto to JSON
+        String userJson = objectMapper.writeValueAsString(userRequestDto);
+
+        // Act - zavoláme POST požadavek na /api/v1/users
+        mockMvc.perform(post("/api/v1/users")
+                        .contentType("application/json")
+                        .content(userJson))
+                .andExpect(status().isCreated()) // Očekáváme status 201 Created
+                .andExpect(jsonPath("$.id").value(1)) // Očekáváme, že id bude 1
+                .andExpect(jsonPath("$.email").value(mockUser.getEmail())) // Očekáváme správný email
+                .andExpect(jsonPath("$.password").value(mockUser.getPassword())); // Očekáváme správné heslo
     }
 
+
     @Test
-    void updateUser() {
+    void createUserConflict() throws Exception {
+        // Arrange - připravíme mock uživatele a jeho DTO
+        UserRequestDto userRequestDto = new UserRequestDto("test@example.com", "password123");
+
+        // Mock the userService to throw UserAlreadyExistsException when the email already exists
+        when(userService.createUser(any(User.class))).thenThrow(new UserAlreadyExistsException(userRequestDto.getEmail()));
+
+        // Convert userRequestDto to JSON
+        String userJson = objectMapper.writeValueAsString(userRequestDto);
+
+        // Act - zavoláme POST požadavek na /api/v1/users
+        mockMvc.perform(post("/api/v1/users")
+                        .contentType("application/json")
+                        .content(userJson))
+                .andExpect(status().isConflict()) // Očekáváme status 409 Conflict
+                .andExpect(content().string("User with email "+ userRequestDto.getEmail()
+                        +" already exists.")); // Očekáváme chybovou zprávu
     }
+
 
 }
