@@ -39,7 +39,7 @@ public class UserController {
     */
 
     //treti verze
-    @GetMapping
+    @GetMapping("/{id}")
     public User findUser(@PathVariable("id") Long id) {
         return userService.findUser(id);
     }
