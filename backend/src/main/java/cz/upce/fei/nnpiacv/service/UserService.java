@@ -2,6 +2,7 @@ package cz.upce.fei.nnpiacv.service;
 
 import cz.upce.fei.nnpiacv.domain.User;
 import cz.upce.fei.nnpiacv.repository.UserRepository;
+import cz.upce.fei.nnpiacv.exceptions.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,13 @@ public class UserService {
 
     public User findUser(Long id) {
         Optional<User> user = userRepository.findById(id);
+
+        // Ověřujeme, zda uživatel existuje
+        if (user.isEmpty()) {
+            // Pokud neexistuje, vyhodíme výjimku
+            throw new UserNotFoundException("User with id " + id + " not found");
+        }
+
         log.info("User : {}",user.get());
         return user.orElse(null);
     }

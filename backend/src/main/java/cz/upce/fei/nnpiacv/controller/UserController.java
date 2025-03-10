@@ -3,6 +3,7 @@ package cz.upce.fei.nnpiacv.controller;
 import cz.upce.fei.nnpiacv.domain.User;
 import cz.upce.fei.nnpiacv.dto.UserRequestDto;
 import cz.upce.fei.nnpiacv.dto.UserResponseDto;
+import cz.upce.fei.nnpiacv.exceptions.UserNotFoundException;
 import cz.upce.fei.nnpiacv.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -93,7 +94,13 @@ public class UserController {
         );
     }
 
-
+    @RestControllerAdvice
+    public class GlobalExceptionHandler {
+        @ExceptionHandler(UserNotFoundException.class)
+        public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
     /*
     //Původní endpoint users
