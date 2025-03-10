@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -30,15 +29,16 @@ public class UserService {
         log.info("User : {}",user.get());
         return user.orElse(null);
     }
-
+/*
     public Collection<User> findUsers() {
         return userRepository.findAll();
     }
-
+*/
+/*
     public Optional<User> findbyEmail(String email) {
         return userRepository.findByEmail(email);
     }
-
+*/
     public User createUser(User user) {
         // Zkontrolujeme, zda uživatel s tímto emailem již existuje
         if (userRepository.existsByEmail(user.getEmail())) {

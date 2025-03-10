@@ -1,3 +1,87 @@
 
 ChatGPT
 
+mám toto:
+package cz.upce.fei.nnpiacv.controller;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
+@WebMvcTest(UserController.class)
+class UserControllerTest {
+
+    @Test
+    void findUser() {
+    }
+
+    @Test
+    void createUser() {
+    }
+
+    @Test
+    void deleteUser() {
+    }
+
+    @Test
+    void updateUser() {
+    }
+}
+
+nyní mám udělat tento krok
+
+
+
+
+
+
+
+
+
+
+
+dobře no, tak nyní mám toto zadání:
+Testování GET endpointu (Úspěšný stav)
+Vytvořte testy pro GET endpoint /api/v1/users/{id}.
+Nastavte mock tak aby vracel instanci uživatele při zavolání příslušné metody v UserService s příslušnými parametry.
+
+Otestujte návratový kód 200 OK.
+Otestujte, že vracená hodnota je správného typu.
+Otestujte, že vracený uživatel obsahuje očekávané hodnoty.
+Můžete k tomu využít assert.andExpect(). Ta testujte návratové hodnoty kontroleru pro HTTP metody GET (např. formát návratové hodnoty JSON, ID, počtu entit v JSON response nebo jiného obsahu response).
+Pro získání vybraných částí JSON doporučuji používat Jayway JsonPath expression language.
+Pomocí ObjectMapper z Jackson (nebo jiné vhodné alternativy dle vlastní volby) testujte návratové hodnoty kontroleru pro HTTP metody POST (např. pro předání JSON kontroleru za účelem vytvoření nové entity).
+
+
+
+nyní toto:
+Testování GET endpointu (Chybový stav)
+Vytvořte testy pro GET endpoint /api/v1/users/{id} který otestuje chybový stav 404 Not Found.
+
+Test se pokusí získat uživatele s neexistujícím id.
+Vytvořte vhodně pojmenovanou výjimku pro chybový stav.
+
+Upravte UserService tak aby ověřil zdali uživatel s hledaným id existujte v databázi. Pokud ne vyhodí výjimku.
+Implementujte pomocí @ExceptionHandler v UserController ošetření chybového stavu.
+Nastavte mock tak aby vyhodil vyjímku při zavolání příslušné metody v UserService s příslušnými parametry.
+
+
+to jsem si zkontroloval zde: https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc
+
+
+
+public User findUser(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        log.info("User : {}",user.get());
+        return user.orElse(null);
+    }
+
+uprav mi tuhle metoud
+
+
+Testování POST endpointu (Chybový stav) AI
+Vytvořte test pro POST endpoint /api/v1/users s očekávaným návratovým kódem 409 Coflict.
+Test se pokusí vytvořit uživatele s již existujícím emailem.
+Vytvořte vhodně pojmenovanou výjimku pro chybový stav.
+Upravte UserService tak aby ověřoval existenci uživatele s daným emailem a vyhazoval výjimku pokud daný uživatel již existuje.
+Implementujte pomocí @ExceptionHandler v UserController ošetření chybového stavu.
+
