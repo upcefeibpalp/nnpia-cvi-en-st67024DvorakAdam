@@ -1,0 +1,504 @@
+UI knihovna AI
+V rámci semestrální práce bude kladen důraz i na grafické zpracování UI. Existují knihovny, které jsou přizpůsobeny pro React.js při minimální znalosti grafického designu nebo CSS.
+Využijte AI a najděte vhodnou knihovnu pro React.js, která vám pomůže s grafickým zpracováním. Mezi takové knihovny patří například Material-UI, Chakra UI, Tailwind CSS, atd. AI
+Na hlavní stránce App.tsx vytvořte tabulku pro zobrazení seznamu uživatelů s využitím Vámi zvoleného UI .
+Tabulka bude obsahovat sloupce pro zobrazení všech atributů uživatele.
+Každý řádek bude obsahovat tlačítko pro změnu stavu active uživatele.
+Tabulku nastylujte pomocí Vámi vybrané knihovny pro grafické zpracování. AI
+Pomocí AI vygenerujte pole uživatelů a zobrazte je v tabulce. AI
+Ověřte funkčnost tlačítka pro změnu stavu active uživatele.
+Poté tabulku refaktorujte tak, aby byla vytvořena jako samostatná komponenta UserTable.tsx a tu vložte do App.tsx.
+ChatGPT řekl:
+Pro vaši semestrální práci bych doporučil použít knihovnu Material-UI, která je populární, dobře dokumentovaná a poskytuje velké množství komponent, které vám umožní rychle vytvořit atraktivní a funkční uživatelské rozhraní v React.js, aniž byste museli mít hluboké znalosti CSS nebo grafického designu.
+
+Kroky k vytvoření aplikace:
+Instalace Material-UI:
+
+Pokud ještě nemáte nainstalovanou knihovnu Material-UI, můžete ji přidat do vašeho projektu pomocí následujícího příkazu:
+
+bash
+Zkopírovat
+npm install @mui/material @emotion/react @emotion/styled
+Vytvoření Tabulky s uživateli:
+
+Začněme tím, že vytvoříme seznam uživatelů a tabulku, která bude zobrazovat jejich atributy (např. jméno, email, status). Také přidáme funkci pro změnu stavu "active" uživatele.
+
+Kód pro App.tsx:
+
+tsx
+Zkopírovat
+import React, { useState } from 'react';
+import { Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper } from '@mui/material';
+import UserTable from './UserTable';
+
+const App: React.FC = () => {
+  const [users, setUsers] = useState([
+    { id: 1, name: 'John Doe', email: 'john@example.com', isActive: true },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', isActive: false },
+    { id: 3, name: 'Alex Johnson', email: 'alex@example.com', isActive: true },
+  ]);
+
+  const toggleActiveStatus = (id: number) => {
+    setUsers(users.map(user =>
+      user.id === id ? { ...user, isActive: !user.isActive } : user
+    ));
+  };
+
+  return (
+    <Container>
+      <h1>User List</h1>
+      <UserTable users={users} onToggleActive={toggleActiveStatus} />
+    </Container>
+  );
+};
+
+export default App;
+Vytvoření komponenty UserTable.tsx:
+
+Vytvoříme komponentu UserTable.tsx, která bude zodpovědná za zobrazení tabulky uživatelů a umožní změnu stavu "active".
+
+tsx
+Zkopírovat
+import React from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper } from '@mui/material';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  isActive: boolean;
+}
+
+interface UserTableProps {
+  users: User[];
+  onToggleActive: (id: number) => void;
+}
+
+const UserTable: React.FC<UserTableProps> = ({ users, onToggleActive }) => {
+  return (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {users.map(user => (
+            <TableRow key={user.id}>
+              <TableCell>{user.name}</TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>{user.isActive ? 'Active' : 'Inactive'}</TableCell>
+              <TableCell>
+                <Button
+                  variant="contained"
+                  color={user.isActive ? 'secondary' : 'primary'}
+                  onClick={() => onToggleActive(user.id)}
+                >
+                  {user.isActive ? 'Deactivate' : 'Activate'}
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
+
+export default UserTable;
+Vysvětlení:
+Komponenta App.tsx:
+
+Definuje stav pro seznam uživatelů (users), který obsahuje objekty s atributy jako id, name, email a isActive.
+
+Funkce toggleActiveStatus přepíná stav isActive pro každého uživatele.
+
+Komponenta UserTable je volána s propsem users, který obsahuje seznam uživatelů, a onToggleActive, což je funkce pro změnu stavu aktivního uživatele.
+
+Komponenta UserTable.tsx:
+
+Zobrazuje tabulku s uživatelskými údaji.
+
+Každý řádek obsahuje tlačítko, které umožňuje změnu stavu aktivního uživatele. Tlačítko je buď Activate nebo Deactivate, v závislosti na aktuálním stavu.
+
+Používáme Material-UI komponenty jako Table, Button, TableCell, atd.
+
+Testování:
+Po spuštění aplikace byste měli vidět seznam uživatelů v tabulce s tlačítky pro přepínání stavu "active" / "inactive".
+
+Kliknutím na tlačítko změňte stav uživatele. Tlačítko by mělo změnit text a barvu podle aktuálního stavu.
+
+Refaktoring:
+Jakmile budete mít tuto tabulku funkční, můžete komponentu UserTable.tsx oddělit do samostatného souboru, jak je ukázáno výše.
+
+Tímto způsobem dosáhnete čistého a dobře strukturovaného kódu, který využívá knihovnu Material-UI k snadnému vytváření UI komponent bez potřeby pokročilého CSS.
+
+
+Řekl/a jsi:
+takto nyní vypadá App.tsx:
+import './App.css'
+import User from "./components/User.tsx"
+
+function App() {
+
+  return (
+    <>
+        <h1>Users</h1>
+        <User id={0} email={"pavel@upce.cz"} active={true} />
+    </>
+  )
+}
+
+export default App
+
+
+a chci v tom udělat toto:
+Na hlavní stránce App.tsx vytvořte tabulku pro zobrazení seznamu uživatelů s využitím Vámi zvoleného UI .
+Tabulka bude obsahovat sloupce pro zobrazení všech atributů uživatele.
+Každý řádek bude obsahovat tlačítko pro změnu stavu active uživatele.
+Tabulku nastylujte pomocí Vámi vybrané knihovny pro grafické zpracování. AI
+Pomocí AI vygenerujte pole uživatelů a zobrazte je v tabulce. AI
+Ověřte funkčnost tlačítka pro změnu stavu active uživatele.
+Poté tabulku refaktorujte tak, aby byla vytvořena jako samostatná komponenta UserTable.tsx a tu vložte do App.tsx.
+ChatGPT řekl:
+Děkuji za upřesnění! Abychom přizpůsobili kód vaší požadavkům, začneme s vytvořením tabulky pro zobrazení seznamu uživatelů. Poté přidáme tlačítko pro změnu stavu "active" uživatele. Na závěr tuto tabulku refaktorujeme do samostatné komponenty UserTable.tsx.
+
+1. Instalace knihovny Material-UI
+Pokud jste ještě nenainstalovali knihovnu Material-UI, můžete to udělat pomocí následujícího příkazu:
+
+bash
+Zkopírovat
+npm install @mui/material @emotion/react @emotion/styled
+2. Úprava App.tsx:
+Vytvoříme tabulku, která bude zobrazovat seznam uživatelů s atributy jako id, email, a active, a přidáme tlačítka pro změnu stavu.
+
+Zde je upravený kód pro App.tsx:
+
+tsx
+Zkopírovat
+import React, { useState } from 'react';
+import './App.css';
+import UserTable from './components/UserTable';
+
+function App() {
+  // Pole uživatelů
+  const [users, setUsers] = useState([
+    { id: 1, email: 'pavel@upce.cz', active: true },
+    { id: 2, email: 'josef@upce.cz', active: false },
+    { id: 3, email: 'jana@upce.cz', active: true },
+  ]);
+
+  // Funkce pro přepnutí stavu uživatele
+  const toggleActiveStatus = (id: number) => {
+    setUsers(users.map(user =>
+      user.id === id ? { ...user, active: !user.active } : user
+    ));
+  };
+
+  return (
+    <div className="App">
+      <h1>Users</h1>
+      <UserTable users={users} onToggleActive={toggleActiveStatus} />
+    </div>
+  );
+}
+
+export default App;
+3. Vytvoření komponenty UserTable.tsx:
+Komponenta UserTable.tsx bude zodpovědná za zobrazení tabulky a přepínání stavu uživatele.
+
+tsx
+Zkopírovat
+import React from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper } from '@mui/material';
+
+interface User {
+  id: number;
+  email: string;
+  active: boolean;
+}
+
+interface UserTableProps {
+  users: User[];
+  onToggleActive: (id: number) => void;
+}
+
+const UserTable: React.FC<UserTableProps> = ({ users, onToggleActive }) => {
+  return (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>ID</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {users.map(user => (
+            <TableRow key={user.id}>
+              <TableCell>{user.id}</TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>{user.active ? 'Active' : 'Inactive'}</TableCell>
+              <TableCell>
+                <Button
+                  variant="contained"
+                  color={user.active ? 'secondary' : 'primary'}
+                  onClick={() => onToggleActive(user.id)}
+                >
+                  {user.active ? 'Deactivate' : 'Activate'}
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
+
+export default UserTable;
+4. Vysvětlení kódu:
+App.tsx:
+
+Máme pole uživatelů, které je uloženo v useState. Každý uživatel má atributy id, email a active.
+
+Funkce toggleActiveStatus se používá k přepínání stavu uživatele mezi aktivním a neaktivním.
+
+Komponenta UserTable je volána s těmito uživatelskými daty a funkcí pro změnu stavu.
+
+UserTable.tsx:
+
+Tabulka zobrazuje uživatelské údaje (ID, email, stav a tlačítko pro změnu stavu).
+
+Používáme komponenty z Material-UI, jako je Table, TableCell, Button, a TableRow, k vytvoření přehledné tabulky.
+
+Tlačítko mění barvu a text podle toho, zda je uživatel aktivní nebo neaktivní. Kliknutím na něj se přepne stav uživatele (aktivní/neaktivní).
+
+5. Testování aplikace:
+Po spuštění aplikace byste měli vidět seznam uživatelů v tabulce, kde bude každé tlačítko pro přepnutí stavu (aktivní/neaktivní). Kliknutím na tlačítko by se měl přepnout stav uživatele mezi aktivním a neaktivním.
+
+6. Přidání CSS pro základní stylování (volitelné):
+Pokud chcete přidat nějaké základní stylování, můžete upravit soubor App.css nebo přidat vlastní CSS.
+
+7. Závěr:
+Tento postup splňuje vaše požadavky na vytvoření tabulky s uživatelskými daty, přidání tlačítka pro změnu stavu uživatele a refaktoring tabulky do samostatné komponenty. Tímto způsobem je aplikace čistá, modularizovaná a snadno rozšiřitelná.
+
+
+Řekl/a jsi:
+import * as React from "react";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper } from '@mui/material';
+import User from "./User.tsx";
+
+interface UserTableProps {
+    users: User[];
+    onToggleActive: (id: number) => void;
+}
+
+const UserTable: React.FC<UserTableProps> = ({ users, onToggleActive }) => {
+    return (
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>ID</TableCell>
+                        <TableCell>Email</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {users.map(user => (
+                        <TableRow key={user.id}>
+                            <TableCell>{user.id}</TableCell>
+                            <TableCell>{user.email}</TableCell>
+                            <TableCell>{user.active ? 'Active' : 'Inactive'}</TableCell>
+                            <TableCell>
+                                <Button
+                                    variant="contained"
+                                    color={user.active ? 'secondary' : 'primary'}
+                                    onClick={() => onToggleActive(user.id)}
+                                >
+                                    {user.active ? 'Deactivate' : 'Activate'}
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
+};
+
+export default UserTable;
+
+
+TS6133: 'User' is declared but its value is never read.
+TS2749: 'User' refers to a value, but is being used as a type here. Did you mean 'typeof User'?
+ChatGPT řekl:
+Vypadá to, že máte chybu ve vaší komponentě, která je způsobena tím, že importujete User z "./User.tsx", ale ve skutečnosti jej používáte jako typ, což způsobuje chybu. V tomto případě máte zřejmě komponentu User, která je definována jako React komponenta, a chcete použít její atributy pro typování.
+
+Pokud User není v tomto kontextu potřeba jako komponenta, ale pouze pro typování uživatele, měli byste místo toho definovat interface nebo typ pro uživatele přímo ve vašem souboru.
+
+Oprava:
+Odeberte import User a vytvořte typ pro uživatele přímo v souboru UserTable.tsx. Můžete například definovat typ uživatele takto:
+
+tsx
+Zkopírovat
+import * as React from "react";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper } from '@mui/material';
+
+interface User {
+    id: number;
+    email: string;
+    active: boolean;
+}
+
+interface UserTableProps {
+    users: User[];
+    onToggleActive: (id: number) => void;
+}
+
+const UserTable: React.FC<UserTableProps> = ({ users, onToggleActive }) => {
+    return (
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>ID</TableCell>
+                        <TableCell>Email</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {users.map(user => (
+                        <TableRow key={user.id}>
+                            <TableCell>{user.id}</TableCell>
+                            <TableCell>{user.email}</TableCell>
+                            <TableCell>{user.active ? 'Active' : 'Inactive'}</TableCell>
+                            <TableCell>
+                                <Button
+                                    variant="contained"
+                                    color={user.active ? 'secondary' : 'primary'}
+                                    onClick={() => onToggleActive(user.id)}
+                                >
+                                    {user.active ? 'Deactivate' : 'Activate'}
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
+};
+
+export default UserTable;
+Vysvětlení změn:
+Definice User jako typu:
+
+Vytvořili jsme nový interface User, který specifikuje, jaké vlastnosti by měl každý uživatel mít (id, email, active).
+
+Tento typ použijeme v komponentě UserTable k definování typu pole uživatelů (users).
+
+Odstranění nepotřebného importu:
+
+Import komponenty User je odstraněn, protože jej zde nepotřebujete (pokud se nejedná o komponentu pro zobrazení jednotlivých uživatelů).
+
+Tímto způsobem by měla být chyba vyřešena a komponenta by měla fungovat správně.
+
+
+Řekl/a jsi:
+Teoretické úkoly AI
+K čemu slouží parametr key u komponent a kdy je výhodné jej použít?
+Jaký je rozdíl mezi "Re-Evaluate" a "Re-Render" DOM struktury a kdy k němu při použítí Reactu dochází?
+Proč se dříve do každé komponenty musel vkládat import react from React?
+K čemu slouží soubor eslint.config.js a jaké příkazy lze použít?
+ChatGPT řekl:
+1. K čemu slouží parametr key u komponent a kdy je výhodné jej použít?
+Parametr key se používá v Reactu k identifikaci jednotlivých komponent v seznamu nebo kolekci, kdy je potřeba sledovat jejich změny (přidání, odebrání nebo změnu pořadí). Tento parametr je důležitý pro efektivní vykreslování a optimalizaci, zejména při práci s dynamickými seznamy.
+
+Výhody použití key:
+
+Optimalizace výkonu: React používá key pro porovnání předchozího a aktuálního stavu seznamu, což umožňuje efektivní aktualizace DOM. Pokud byste key neuváděli, React by musel všechny položky přerenderovat, což by vedlo k neefektivnímu vykreslování.
+
+Zachování stavu: Při změně pořadí položek nebo při jejich přidávání/odebírání React zachová stav komponenty, pokud správně použijete key. Pokud key není správně přiřazen, React může nesprávně přiřadit stav k jiným komponentám.
+
+Příklad použití:
+
+jsx
+Zkopírovat
+const users = ['Alice', 'Bob', 'Charlie'];
+
+function UserList() {
+  return (
+    <ul>
+      {users.map((user, index) => (
+        <li key={user}>{user}</li> // 'key' pomáhá Reactu rozpoznat změny
+      ))}
+    </ul>
+  );
+}
+2. Jaký je rozdíl mezi "Re-Evaluate" a "Re-Render" DOM struktury a kdy k němu při použití Reactu dochází?
+Re-Evaluate: Tato fáze se týká toho, kdy React znovu vykoná funkci komponenty (např. při změně stavu nebo props). Re-Evaluate znamená, že React vyhodnocuje, zda je potřeba komponentu znovu přepočítat (např. změny v props nebo state mohou vyvolat tento proces). To neznamená, že React znovu vykreslí DOM, ale pouze, že došlo k "přepočtu" hodnoty komponenty.
+
+Re-Render: Tento termín znamená, že React provádí skutečné "znovuvykreslení" komponenty do DOMu. K tomu dochází po "Re-Evaluate", pokud došlo ke změně, která vyžaduje aktualizaci DOMu. Re-Render se může stát i bez změny ve stavu nebo props, například když React zjistí, že existuje změna v DOMu, která vyžaduje vizuální aktualizaci.
+
+Kdy k tomu dochází v Reactu?
+
+Re-Evaluate se děje, když dojde ke změně stavu (state) nebo propů (props) a komponenta musí být znovu vyhodnocena, aby zobrazila aktuální hodnoty.
+
+Re-Render probíhá, když React zjistí, že komponenta byla změněna a je potřeba vykreslit nové výstupy v DOMu.
+
+3. Proč se dříve do každé komponenty musel vkládat import React from 'react';?
+Před verzí React 17 byl tento import povinný, protože React byl vždy potřebný k tomu, aby funkce jako React.createElement fungovaly. React využíval tento import pro interní logiku při vytváření a vykreslování komponent.
+
+Od Reactu 17 již není tento import povinný, protože React nyní automaticky detekuje, že používáte JSX (což je syntaktický cukr, který se nakonec přeloží na React.createElement). Pokud tedy používáte pouze JSX a nezavoláte žádné funkce přímo z Reactu, není potřeba tento import explicitně uvádět.
+
+4. K čemu slouží soubor eslint.config.js a jaké příkazy lze použít?
+Soubor eslint.config.js slouží k konfiguraci nástroje ESLint, což je nástroj pro statickou analýzu kódu, který detekuje chyby, problémy se stylem kódu a nevhodné vzory v JavaScriptu (a dalších jazycích, jako je TypeScript). Tento soubor je konfiguračním souborem pro ESLint, který vám umožňuje přizpůsobit pravidla a chování nástroje podle potřeb vašeho projektu.
+
+Co lze v souboru eslint.config.js konfigurovat:
+
+Pravidla: Určíte, která pravidla budou aktivní a jaký mají mít rozsah (např. povolit varování nebo chyby).
+
+Pluginy a rozšíření: Můžete nainstalovat a používat různé pluginy pro ESLint, například pro React, TypeScript, nebo pro jiné frameworky.
+
+Umístění souboru: Nastavení, kde ESLint bude hledat soubory k analýze (např. všechny soubory .js nebo .tsx).
+
+Příklad souboru eslint.config.js:
+
+js
+Zkopírovat
+module.exports = {
+  parser: '@typescript-eslint/parser', // Používáme parser pro TypeScript
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+  ],
+  rules: {
+    'no-console': 'warn', // Povolí varování pro používání console.log
+    'react/prop-types': 'off', // Zakáže požadavek na propTypes v Reactu
+  },
+  env: {
+    browser: true,
+    node: true,
+    es2021: true,
+  },
+};
+Příkazy pro ESLint:
+
+eslint . – Spustí ESLint na všech souborech v aktuálním adresáři.
+
+eslint --fix – Automaticky opraví některé problémy ve vašem kódu (např. špatný formát, mezery).
+
+eslint --ext .js,.jsx,.ts,.tsx – Definuje přípony souborů, které ESLint má kontrolovat.
+
+Tento soubor vám tedy umožňuje specifikovat, jaký typ analýzy kódu bude aplikován v rámci vašeho projektu, a udržovat kód čistý a konzistentní s danými pravidly.
