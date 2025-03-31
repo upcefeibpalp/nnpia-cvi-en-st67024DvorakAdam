@@ -2,20 +2,21 @@ package cz.upce.fei.nnpiacv.service;
 
 import cz.upce.fei.nnpiacv.domain.User;
 import cz.upce.fei.nnpiacv.exceptions.*;
-import cz.upce.fei.nnpiacv.repository.UserRepository;
+        import cz.upce.fei.nnpiacv.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
 @Slf4j
 @AllArgsConstructor
 public class UserService {
- private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public User findUser(Long id) {
         Optional<User> user = userRepository.findById(id);
@@ -29,16 +30,16 @@ public class UserService {
         log.info("User : {}",user.get());
         return user.orElse(null);
     }
-/*
+
     public Collection<User> findUsers() {
         return userRepository.findAll();
     }
-*/
-/*
-    public Optional<User> findbyEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-*/
+
+    /*
+        public Optional<User> findbyEmail(String email) {
+            return userRepository.findByEmail(email);
+        }
+    */
     public User createUser(User user) {
         // Zkontrolujeme, zda uživatel s tímto emailem již existuje
         if (userRepository.existsByEmail(user.getEmail())) {
@@ -72,6 +73,10 @@ public class UserService {
 
         // Uložíme aktualizovaného uživatele zpět do databáze
         return userRepository.save(existingUser);
+    }
+
+    public Collection<User> findAllUsers() {
+        return userRepository.findAll();
     }
 /*
     public User findUserById(Long id) {

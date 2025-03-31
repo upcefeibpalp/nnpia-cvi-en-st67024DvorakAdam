@@ -1,23 +1,41 @@
 import './App.css'
-//import User from "./components/User.tsx"
+import { useState, useEffect } from "react";
 import UserTable from './components/UserTable';
-import {useState} from "react";
 
 function App() {
-/*
-  return (
-    <>
-        <h1>Users</h1>
-        <User id={0} email={"pavel@upce.cz"} active={true} />
-    </>
-  )*/
+    const [users, setUsers] = useState<any[]>([]); // Stav pro uživatele
+    const [loading, setLoading] = useState<boolean>(false); // Stav pro načítání
+    const [error, setError] = useState<string | null>(null); // Stav pro chybu
 
-    // Pole uživatelů
-    const [users, setUsers] = useState([
-        { id: 1, email: 'pavel@upce.cz', active: true },
-        { id: 2, email: 'josef@upce.cz', active: false },
-        { id: 3, email: 'jana@upce.cz', active: true },
-    ]);
+    // Funkce pro načítání uživatelů z backendu
+    const fetchUsers = async () => {
+        setLoading(true); // Začneme načítat
+        setError(null); // Resetujeme chybu
+        try {
+            const response = await fetch('http://localhost:9000/api/v1/users/all', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Chyba při načítání uživatelů');
+            }
+
+            const data = await response.json();
+            setUsers(data); // Uložíme uživatele do stavu
+        } catch (err) {
+            setError('Chyba při volání endpointu');
+        } finally {
+            setLoading(false); // Načítání skončilo
+        }
+    };
+
+    // Načteme uživatele při prvním renderování komponenty (componentDidMount)
+    useEffect(() => {
+        fetchUsers();
+    }, []);
 
     // Funkce pro přepnutí stavu uživatele
     const toggleActiveStatus = (id: number) => {
@@ -29,9 +47,13 @@ function App() {
     return (
         <div className="App">
             <h1>Users</h1>
-            <UserTable users={users} onToggleActive={toggleActiveStatus} />
+            {loading && <p>Načítám uživatele...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {!loading && !error && users.length > 0 && (
+                <UserTable users={users} onToggleActive={toggleActiveStatus} />
+            )}
         </div>
     );
 }
 
-export default App
+export default App;

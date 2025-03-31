@@ -20,6 +20,7 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
+    private boolean active;
 
     public Long getId() {
         return id;
@@ -28,5 +29,6 @@ public class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        this.active = true;
     }
 }

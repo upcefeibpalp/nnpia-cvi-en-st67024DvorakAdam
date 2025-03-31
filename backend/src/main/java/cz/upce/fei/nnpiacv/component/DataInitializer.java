@@ -20,7 +20,7 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // Vytvoření nového uživatele
-        User user = new User(0L, "admin@upce.cz", "ABC123");
+        User user = new User(0L, "admin@upce.cz", "ABC123",true);
 
         log.debug("Admin user created: " + user);
 
