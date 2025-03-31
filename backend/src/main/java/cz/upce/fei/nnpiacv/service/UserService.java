@@ -78,6 +78,26 @@ public class UserService {
     public Collection<User> findAllUsers() {
         return userRepository.findAll();
     }
+
+    // Metoda pro aktivaci uživatele (stav 'active' na true)
+    public User activateUser(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            user.setActive(true);  // Nastavení 'active' na true
+            return userRepository.save(user);  // Uložení změny do databáze
+        }
+        return null;  // Pokud uživatel nebyl nalezen, vrátíme null
+    }
+
+    // Metoda pro deaktivaci uživatele (stav 'active' na false)
+    public User deactivateUser(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            user.setActive(false);  // Nastavení 'active' na false
+            return userRepository.save(user);  // Uložení změny do databáze
+        }
+        return null;  // Pokud uživatel nebyl nalezen, vrátíme null
+    }
 /*
     public User findUserById(Long id) {
         return users.get(id);

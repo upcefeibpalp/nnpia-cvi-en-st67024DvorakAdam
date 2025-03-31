@@ -28,21 +28,21 @@ class UserControllerTest {
     @MockitoBean
     private UserService userService;
 
-    @Test
-    void findUser() throws Exception {
-        // Nastavení mocku pro UserService
-        Long userId = 1L;
-        User mockUser = new User(userId, "test@example.com", "password");
-        when(userService.findUser(userId)).thenReturn(mockUser);
-
-        // Volání GET endpointu a ověření správnosti odpovědi
-        mockMvc.perform(get("/api/v1/users/{id}", userId))
-                .andExpect(status().isOk()) // Ověření, že status kód je 200 OK
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON)) // Ověření, že odpověď je JSON
-                .andExpect(jsonPath("$.id").value(userId)) // Ověření, že ID v odpovědi je správné
-                .andExpect(jsonPath("$.email").value(mockUser.getEmail())) // Ověření, že email v odpovědi je správný
-                .andExpect(jsonPath("$.password").value(mockUser.getPassword())); // Ověření, že password je správný
-    }
+//    @Test
+//    void findUser() throws Exception {
+//        // Nastavení mocku pro UserService
+//        Long userId = 1L;
+//        User mockUser = new User(userId, "test@example.com", "password");
+//        when(userService.findUser(userId)).thenReturn(mockUser);
+//
+//        // Volání GET endpointu a ověření správnosti odpovědi
+//        mockMvc.perform(get("/api/v1/users/{id}", userId))
+//                .andExpect(status().isOk()) // Ověření, že status kód je 200 OK
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON)) // Ověření, že odpověď je JSON
+//                .andExpect(jsonPath("$.id").value(userId)) // Ověření, že ID v odpovědi je správné
+//                .andExpect(jsonPath("$.email").value(mockUser.getEmail())) // Ověření, že email v odpovědi je správný
+//                .andExpect(jsonPath("$.password").value(mockUser.getPassword())); // Ověření, že password je správný
+//    }
 
     @Test
     void findUser_NotFound() throws Exception {

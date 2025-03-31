@@ -1,2 +1,873 @@
 CHAT GPT
 
+Skip to content
+Řekl/a jsi:
+jak se udělá z vite react frontendu z App.tsx tlačítko, které pomocí fetch zavolá endpoint konkrétní na backendu
+ChatGPT řekl:
+Pokud chceš v React aplikaci vytvořit tlačítko, které pomocí fetch zavolá backendový endpoint, zde je krok za krokem, jak to udělat.
+
+Předpokládám, že používáš Vite pro React projekt a máš soubor App.tsx, kde chceš tlačítko přidat.
+
+1. Vytvoření tlačítka a logiky pro fetch
+V souboru App.tsx přidej kód, který vytvoří tlačítko a při jeho stisknutí provede fetch požadavek na backend.
+
+import React, { useState } from 'react';
+
+const App = () => {
+  const [response, setResponse] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleFetch = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Změň URL na skutečný endpoint svého backendu
+      const res = await fetch('https://tvuj-backend-endpoint.cz/api/endpoint', {
+        method: 'GET', // nebo 'POST', podle typu požadavku
+        headers: {
+          'Content-Type': 'application/json',
+          // pokud je potřeba nějaký auth token:
+          // 'Authorization': 'Bearer tvuj_token',
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error('Chyba při načítání dat');
+      }
+
+      const data = await res.json();
+      setResponse(JSON.stringify(data, null, 2)); // uložíme odpověď do stavu
+    } catch (err) {
+      setError('Chyba při volání endpointu');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={handleFetch} disabled={loading}>
+        {loading ? 'Načítám...' : 'Zavolej API'}
+      </button>
+
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {response && <pre>{response}</pre>}
+    </div>
+  );
+};
+
+export default App;
+2. Vysvětlení kódu
+useState: Používáme pro uložení odpovědi z API (response), pro sledování stavu načítání (loading) a pro případné zobrazení chyby (error).
+
+handleFetch: Funkce, která zavolá fetch na endpoint backendu. Pokud je vše v pořádku, data jsou uložena do stavu response. Pokud dojde k chybě, nastaví se do stavu error zpráva o chybě.
+
+Tlačítko: Tlačítko je propojeno s funkcí handleFetch, která se zavolá při kliknutí na tlačítko. Pokud je požadavek v průběhu, tlačítko bude deaktivováno a zobrazí se "Načítám...".
+
+Zobrazení odpovědi: Pokud dostaneme odpověď z API, ta se zobrazí v <pre> tagu (pro lepší formátování JSON).
+
+3. Použití v projektu
+Tento kód můžeš vložit přímo do App.tsx. Pokud tvůj backend běží na jiném portu nebo doméně než frontend, ujisti se, že backend podporuje CORS (Cross-Origin Resource Sharing), aby bylo možné provádět požadavky z jiného místa.
+
+Pokud potřebuješ pro fetch nějaký jiný typ požadavku (např. POST), stačí změnit method v objektu, který posíláš do fetch, a případně přidat body s daty.
+
+Například pro POST:
+
+const res = await fetch('https://tvuj-backend-endpoint.cz/api/endpoint', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ key: 'value' }), // posíláš data
+});
+Tímto způsobem snadno zavoláš API z frontendu pomocí tlačítka v React aplikaci.
+
+Řekl/a jsi:
+import './App.css'
+//import User from "./components/User.tsx"
+//import UserTable from './components/UserTable';
+import {useState} from "react";
+
+function App() {
+
+    // // Pole uživatelů
+    // const [users, setUsers] = useState([
+    //     { id: 1, email: 'pavel@upce.cz', active: true },
+    //     { id: 2, email: 'josef@upce.cz', active: false },
+    //     { id: 3, email: 'jana@upce.cz', active: true },
+    // ]);
+    //
+    // // Funkce pro přepnutí stavu uživatele
+    // const toggleActiveStatus = (id: number) => {
+    //     setUsers(users.map(user =>
+    //         user.id === id ? { ...user, active: !user.active } : user
+    //     ));
+    // };
+
+    const [response, setResponse] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleFetch = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            // Změň URL na skutečný endpoint svého backendu
+            const res = await fetch('https://localhost:9000/api/v1/users/all', {
+                method: 'GET', // nebo 'POST', podle typu požadavku
+                headers: {
+                    'Content-Type': 'application/json',
+                    // pokud je potřeba nějaký auth token:
+                    // 'Authorization': 'Bearer tvuj_token',
+                },
+            });
+
+            if (!res.ok) {
+                throw new Error('Chyba při načítání dat');
+            }
+
+            const data = await res.json();
+            setResponse(JSON.stringify(data, null, 2)); // uložíme odpověď do stavu
+        } catch (err) {
+            setError('Chyba při volání endpointu');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="App">
+            <h1>Users</h1>
+            <button onClick={handleFetch} disabled={loading}>
+                {loading ? 'Načítám...' : 'Zavolej API'}
+            </button>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {response && <pre>{response}</pre>}
+            {/*<UserTable users={users} onToggleActive={toggleActiveStatus} />*/}
+        </div>
+    );
+}
+
+export default App
+
+
+
+mám chybu při volání endpointu
+ChatGPT řekl:
+Pokud dostáváš chybu při volání endpointu, může být několik důvodů, proč to nefunguje správně. Podíváme se na několik možných příčin a jak je řešit:
+
+1. Problém s CORS (Cross-Origin Resource Sharing)
+Pokud backend běží na jiném portu než frontend (např. localhost:9000 pro backend a localhost:3000 pro frontend), může to být způsobeno CORS politikou. Ujisti se, že server umožňuje připojení z frontendu.
+
+Řešení: Pokud máš přístup ke kódu backendu, ujisti se, že je správně nakonfigurován pro podporu CORS. Například v Node.js s Express by to mohlo vypadat takto:
+
+const cors = require('cors');
+app.use(cors()); // Povolit všechny domény, pokud je to v pořádku pro tvůj projekt
+Pokud používáš jiný backend, podívej se na příslušnou dokumentaci pro povolení CORS.
+
+2. Problém s protokolem (HTTP vs HTTPS)
+Pokud backend běží na HTTPS (https://localhost:9000), ale frontend běží na HTTP (http://localhost:3000), může to způsobovat problémy s bezpečností prohlížeče, které blokují požadavky mezi HTTP a HTTPS. Ujisti se, že obě aplikace běží na stejném protokolu (buď obě na HTTPS, nebo obě na HTTP).
+
+Řešení: Pokud je to možné, použij pro oba servery HTTPS. Pro lokální vývoj můžeš použít self-signed certifikáty nebo nástroje jako mkcert pro generování certifikátů.
+
+3. Problém s endpointem nebo serverem
+Možná, že endpoint, který voláš (https://localhost:9000/api/v1/users/all), není dostupný, nebo server není správně spuštěný. Zkontroluj, jestli endpoint skutečně existuje a je správně nasměrován.
+
+Řešení: Zkontroluj, jestli server běží a endpoint je dostupný. Pokud máš přístup k backendu, ověř, že endpoint odpovídá a je správně nakonfigurován.
+
+4. Problém s fetch požadavkem
+Je možné, že fetch požadavek není správně odeslán. Prohlížeč může ukázat podrobnosti o chybě ve vývojářských nástrojích (v konzoli). Zkus si otevřít Developer Tools (např. F12) a podívat se na záložku Network, kde můžeš vidět podrobnosti o požadavcích a odpovědích.
+
+Řešení: Zkontroluj status kód odpovědi v Network záložce pro daný požadavek a zjisti, jaký je stav serveru. Pokud máš jiný status než 200 (např. 500, 404), znamená to, že něco není v pořádku.
+
+5. Logování chyby pro podrobnosti
+Pokud stále dostáváš chybu při volání API, může být užitečné přidat více logování, abys zjistil, co se konkrétně děje.
+
+Můžeš vylepšit část, kde chytáš chyby v catch bloku:
+
+catch (err) {
+    console.error("Error during fetch:", err); // Logování podrobností chyby
+    setError('Chyba při volání endpointu');
+}
+Tímto způsobem budeš mít podrobnější informace o tom, co se děje.
+
+6. Nesprávná URL (prototyp, port nebo cesta)
+Zkontroluj, zda je URL správná. Pokud backend běží na jiném portu, je potřeba správně nastavit port v URL.
+
+Například pokud backend běží na portu 9000, ujisti se, že URL obsahuje správný port (https://localhost:9000/api/v1/users/all).
+
+Pokud používáš HTTPS, zkontroluj, že backend podporuje SSL.
+
+Krok pro krokem kontrola:
+Ověř, že backend běží správně.
+
+Ověř, že endpoint je správný a že vrací správné odpovědi (můžeš to ověřit např. pomocí nástroje jako Postman nebo curl).
+
+Ověř CORS a zkontroluj, zda není problém s připojením mezi HTTP a HTTPS.
+
+Pokud stále dostáváš chybu, podívej se do vývojářských nástrojů (F12) a zkontroluj podrobnosti o chybě ve Network záložce.
+
+Pokud to nevyřeší problém, dej vědět, jaké chybové hlášení vidíš nebo jaký stav odpovědi dostáváš, a můžeme to prozkoumat hlouběji!
+
+Řekl/a jsi:
+const cors = require('cors');
+app.use(cors()); // Povolit všechny domény, pokud je to v pořádku pro tvůj projekt
+
+
+kam to mám dat
+ChatGPT řekl:
+Pokud používáš Node.js s Express a chceš povolit CORS pro všechny domény (což je běžné během vývoje), můžeš tento kód přidat do svého serverového souboru, kde vytváříš a konfigurujete svůj Express server. Pokud používáš cors middleware, musíte ho přidat před všechny route definice, aby bylo možné CORS pro všechny požadavky správně nakonfigurovat.
+
+Postup:
+Nainstaluj cors (pokud ho ještě nemáš nainstalovaný):
+
+Pokud ještě nemáš nainstalovaný balíček cors, můžeš ho přidat do svého projektu pomocí NPM nebo Yarn:
+
+npm install cors
+nebo
+
+yarn add cors
+Přidej cors middleware do svého serverového souboru:
+
+Pokud máš Express server (například v souboru server.js nebo app.js), musíš tento middleware přidat na začátek, před definování všech route, aby byly všechny požadavky na server umožněny z různých domén.
+
+const express = require('express');
+const cors = require('cors');
+const app = express();
+const port = 9000;
+
+// Povolit všechny domény (nebo specifikovat doménu, pokud chceš omezit přístup)
+app.use(cors());  // Tímto povolíš CORS pro všechny domény
+
+// Můžeš také specifikovat konkrétní doménu (např. pouze pro localhost:3000):
+// app.use(cors({
+//   origin: 'http://localhost:3000'  // Povolí přístup pouze z této domény
+// }));
+
+// Přidej své API route zde
+app.get('/api/v1/users/all', (req, res) => {
+    res.json([
+        { id: 1, email: 'pavel@upce.cz', active: true },
+        { id: 2, email: 'josef@upce.cz', active: false },
+        { id: 3, email: 'jana@upce.cz', active: true },
+    ]);
+});
+
+app.listen(port, () => {
+    console.log(`Server běží na http://localhost:${port}`);
+});
+Vysvětlení:
+app.use(cors()): Toto povolí všechny domény, aby mohly posílat požadavky na tvůj server. Pokud chceš mít více restriktivní nastavení, můžeš specifikovat konkrétní domény, které mohou požadavky odesílat.
+
+Například pro povolení pouze http://localhost:3000 (tvůj frontend běží na tomto portu během vývoje):
+
+app.use(cors({
+    origin: 'http://localhost:3000',  // Pouze tento frontend bude moci posílat požadavky
+}));
+Route: Poté, co je CORS povolen, nastavuješ svoje API route, například pro získání seznamu uživatelů, jak je ukázáno v příkladu.
+
+3. Restartuj server
+Po přidání tohoto kódu nezapomeň restartovat svůj backend server, aby se změny projevily.
+
+Další možnosti konfigurace CORS:
+Pokud potřebuješ více konfigurací (např. povolit různé HTTP metody nebo hlavičky), můžeš využít více parametrů, např.:
+
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+Tímto způsobem by mělo být možné provádět požadavky z frontendové aplikace na backend bez problémů s CORS.
+
+Pokud máš nějaké další otázky, dej vědět!
+
+Řekl/a jsi:
+import './App.css'
+//import User from "./components/User.tsx"
+import UserTable from './components/UserTable';
+import {useState} from "react";
+
+function App() {
+    /*
+      return (
+        <>
+            <h1>Users</h1>
+            <User id={0} email={"pavel@upce.cz"} active={true} />
+        </>
+      )*/
+
+    // Pole uživatelů
+    const [users, setUsers] = useState([
+        { id: 1, email: 'pavel@upce.cz', active: true },
+        { id: 2, email: 'josef@upce.cz', active: false },
+        { id: 3, email: 'jana@upce.cz', active: true },
+    ]);
+
+    // Funkce pro přepnutí stavu uživatele
+    const toggleActiveStatus = (id: number) => {
+        console.log("přepnuto");
+        setUsers(users.map(user =>
+            user.id === id ? { ...user, active: !user.active } : user
+        ));
+    };
+
+    return (
+        <div className="App">
+            <h1>Users</h1>
+            <UserTable users={users} onToggleActive={toggleActiveStatus} />
+        </div>
+    );
+}
+
+export default App
+
+
+Předělej to tak ať to volá přes fetch GET http://localhost:9000/api/v1/users/all
+a do tabulky to načte odsuď
+ChatGPT řekl:
+Abychom upravili tvůj React kód tak, aby načítal uživatele pomocí fetch a zobrazoval je v tabulce, musíme přidat asynchronní volání na endpoint http://localhost:9000/api/v1/users/all a uložit odpověď do stavu, který pak bude použit pro zobrazení v tabulce. Tady je, jak by to mohlo vypadat:
+
+1. Upravený App.tsx
+import './App.css'
+import { useState, useEffect } from "react";
+import UserTable from './components/UserTable';
+
+function App() {
+    const [users, setUsers] = useState<any[]>([]); // Stav pro uživatele
+    const [loading, setLoading] = useState<boolean>(false); // Stav pro načítání
+    const [error, setError] = useState<string | null>(null); // Stav pro chybu
+
+    // Funkce pro načítání uživatelů z backendu
+    const fetchUsers = async () => {
+        setLoading(true); // Začneme načítat
+        setError(null); // Resetujeme chybu
+        try {
+            const response = await fetch('http://localhost:9000/api/v1/users/all', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Chyba při načítání uživatelů');
+            }
+
+            const data = await response.json();
+            setUsers(data); // Uložíme uživatele do stavu
+        } catch (err) {
+            setError('Chyba při volání endpointu');
+        } finally {
+            setLoading(false); // Načítání skončilo
+        }
+    };
+
+    // Načteme uživatele při prvním renderování komponenty (componentDidMount)
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    // Funkce pro přepnutí stavu uživatele
+    const toggleActiveStatus = (id: number) => {
+        setUsers(users.map(user =>
+            user.id === id ? { ...user, active: !user.active } : user
+        ));
+    };
+
+    return (
+        <div className="App">
+            <h1>Users</h1>
+            {loading && <p>Načítám uživatele...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {!loading && !error && users.length > 0 && (
+                <UserTable users={users} onToggleActive={toggleActiveStatus} />
+            )}
+        </div>
+    );
+}
+
+export default App;
+Vysvětlení:
+Načítání uživatelů (fetchUsers):
+
+Používáme fetch pro získání uživatelů z API na adrese http://localhost:9000/api/v1/users/all.
+
+Pokud je požadavek úspěšný, uložíme data do stavu users.
+
+V případě chyby se uloží chybová zpráva do stavu error.
+
+useEffect:
+
+Funkce fetchUsers se volá při prvním renderování komponenty (v podobě componentDidMount v klasickém Reactu).
+
+Stavy (loading, error):
+
+loading nám říká, jestli právě načítáme uživatele.
+
+error uchovává chybovou zprávu, pokud požadavek selže.
+
+Zobrazení tabulky:
+
+Po úspěšném načtení a bez chyby se tabulka vykreslí pomocí komponenty UserTable.
+
+Pokud stále načítáme, zobrazí se hláška "Načítám uživatele...".
+
+Pokud dojde k chybě, zobrazí se chybová zpráva.
+
+2. Komponenta UserTable
+Pokud už máš komponentu UserTable, měla by vypadat nějak takto:
+
+import React from 'react';
+
+interface User {
+    id: number;
+    email: string;
+    active: boolean;
+}
+
+interface UserTableProps {
+    users: User[];
+    onToggleActive: (id: number) => void;
+}
+
+const UserTable: React.FC<UserTableProps> = ({ users, onToggleActive }) => {
+    return (
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Stav</th>
+                    <th>Akce</th>
+                </tr>
+            </thead>
+            <tbody>
+                {users.map((user) => (
+                    <tr key={user.id}>
+                        <td>{user.id}</td>
+                        <td>{user.email}</td>
+                        <td>{user.active ? 'Aktivní' : 'Neaktivní'}</td>
+                        <td>
+                            <button onClick={() => onToggleActive(user.id)}>
+                                Přepnout stav
+                            </button>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+};
+
+export default UserTable;
+Co se děje v UserTable:
+Props:
+
+users: seznam uživatelů, který se má zobrazit.
+
+onToggleActive: funkce, která přepíná stav aktivity uživatele při kliknutí na tlačítko.
+
+Zobrazení tabulky:
+
+Tabulka zobrazuje ID, email, stav (aktivní/neaktivní) a tlačítko pro přepnutí stavu uživatele.
+
+3. Závěr
+Tímto způsobem načítáš uživatele z API a zobrazuješ je v tabulce. Při každém načítání uživatelů nebo při chybě se zobrazí příslušná hláška.
+
+Řekl/a jsi:
+já mám table takto:
+import * as React from "react";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper } from '@mui/material';
+
+interface User {
+    id: number;
+    email: string;
+    active: boolean;
+}
+
+interface UserTableProps {
+    users: User[];
+    onToggleActive: (id: number) => void;
+}
+
+const UserTable: React.FC<UserTableProps> = ({ users, onToggleActive }) => {
+    return (
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>ID</TableCell>
+                        <TableCell>Email</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {users.map(user => (
+                        <TableRow key={user.id}>
+                            <TableCell>{user.id}</TableCell>
+                            <TableCell>{user.email}</TableCell>
+                            <TableCell>{user.active ? 'Active' : 'Inactive'}</TableCell>
+                            <TableCell>
+                                <Button
+                                    variant="contained"
+                                    color={user.active ? 'secondary' : 'primary'}
+                                    onClick={() => onToggleActive(user.id)}
+                                >
+                                    {user.active ? 'Deactivate' : 'Activate'}
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
+};
+
+export default UserTable;
+ChatGPT řekl:
+Skvělé! Používáš komponenty z Material-UI pro tabulku, což je super. Tvůj kód pro tabulku vypadá dobře a teď stačí upravit kód ve tvém hlavním souboru, aby se načítali uživatelé z API a zobrazili v této tabulce.
+
+1. Úprava App.tsx pro načítání dat pomocí fetch
+Zde je upravený kód pro App.tsx, který načítá uživatele z API a předává je komponentě UserTable:
+
+import './App.css'
+import { useState, useEffect } from "react";
+import UserTable from './components/UserTable';
+
+function App() {
+    const [users, setUsers] = useState<any[]>([]); // Stav pro uživatele
+    const [loading, setLoading] = useState<boolean>(false); // Stav pro načítání
+    const [error, setError] = useState<string | null>(null); // Stav pro chybu
+
+    // Funkce pro načítání uživatelů z backendu
+    const fetchUsers = async () => {
+        setLoading(true); // Začneme načítat
+        setError(null); // Resetujeme chybu
+        try {
+            const response = await fetch('http://localhost:9000/api/v1/users/all', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Chyba při načítání uživatelů');
+            }
+
+            const data = await response.json();
+            setUsers(data); // Uložíme uživatele do stavu
+        } catch (err) {
+            setError('Chyba při volání endpointu');
+        } finally {
+            setLoading(false); // Načítání skončilo
+        }
+    };
+
+    // Načteme uživatele při prvním renderování komponenty (componentDidMount)
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    // Funkce pro přepnutí stavu uživatele
+    const toggleActiveStatus = (id: number) => {
+        setUsers(users.map(user =>
+            user.id === id ? { ...user, active: !user.active } : user
+        ));
+    };
+
+    return (
+        <div className="App">
+            <h1>Users</h1>
+            {loading && <p>Načítám uživatele...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {!loading && !error && users.length > 0 && (
+                <UserTable users={users} onToggleActive={toggleActiveStatus} />
+            )}
+        </div>
+    );
+}
+
+export default App;
+2. Vysvětlení změn:
+Načítání dat (fetchUsers):
+
+Funkce fetchUsers provede GET požadavek na endpoint http://localhost:9000/api/v1/users/all, kde by měl backend vrátit seznam uživatelů.
+
+Pokud je odpověď úspěšná, uložíme data do stavu users.
+
+Pokud dojde k chybě, nastavíme stav error, který následně zobrazíme uživateli.
+
+useEffect:
+
+Používáme useEffect, abychom při prvním renderování komponenty (App) automaticky zavolali fetchUsers a načetli data.
+
+Zobrazení tabulky:
+
+Po úspěšném načtení uživatelů a pokud není probíhá načítání, je komponenta UserTable vykreslena s daty.
+
+Pokud nastane chyba, zobrazí se chybová zpráva.
+
+Pokud se načítají uživatelé, zobrazí se hláška o načítání.
+
+3. Vylepšení pro interakci (přepnutí stavu):
+Přepínání stavu uživatele: Funkce toggleActiveStatus je stále funkční a přepíná stav aktivního/ neaktivního uživatele při kliknutí na tlačítko.
+
+Aktivní tlačítko: V tabulce, pokud je uživatel aktivní, bude tlačítko "Deactivate", pokud je neaktivní, bude "Activate", přičemž mění barvu podle stavu (primary pro aktivní, secondary pro neaktivní).
+
+4. Testování
+Ujisti se, že server běží na adrese http://localhost:9000 a endpoint http://localhost:9000/api/v1/users/all vrací seznam uživatelů ve formátu JSON.
+
+Pokud vše funguje správně, po spuštění aplikace by se měly načíst data a zobrazit v tabulce.
+
+Pokud budeš mít jakékoli další otázky nebo potíže, dej vědět!
+
+Řekl/a jsi:
+Vložte závislost na knihovnu AXIOS do projektu.
+Upravte kód z předchozího úkolu tak, aby místo Fetch API byla použita knihovna AXIOS.
+Dejte si pozor jak IntelliJ IDEA vytvoří import.
+ChatGPT řekl:
+Abychom změnili kód na použití knihovny Axios místo fetch, musíme nejprve nainstalovat knihovnu Axios a poté upravit kód pro volání API pomocí Axios.
+
+1. Instalace Axios do projektu
+Vytvořte si závislost na Axios pomocí NPM nebo Yarn.
+
+Pokud používáte NPM, spusťte:
+
+npm install axios
+Pokud používáte Yarn, spusťte:
+
+yarn add axios
+2. Upravení App.tsx pro použití Axios místo Fetch
+Nyní upravíme kód, abychom místo fetch použili Axios pro načítání uživatelů.
+
+import './App.css'
+import { useState, useEffect } from "react";
+import axios from 'axios'; // Import Axios
+import UserTable from './components/UserTable';
+
+function App() {
+    const [users, setUsers] = useState<any[]>([]); // Stav pro uživatele
+    const [loading, setLoading] = useState<boolean>(false); // Stav pro načítání
+    const [error, setError] = useState<string | null>(null); // Stav pro chybu
+
+    // Funkce pro načítání uživatelů z backendu
+    const fetchUsers = async () => {
+        setLoading(true); // Začneme načítat
+        setError(null); // Resetujeme chybu
+        try {
+            // Axios GET požadavek
+            const response = await axios.get('http://localhost:9000/api/v1/users/all');
+
+            // Uložíme uživatele do stavu
+            setUsers(response.data);
+        } catch (err) {
+            setError('Chyba při volání endpointu');
+        } finally {
+            setLoading(false); // Načítání skončilo
+        }
+    };
+
+    // Načteme uživatele při prvním renderování komponenty (componentDidMount)
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    // Funkce pro přepnutí stavu uživatele
+    const toggleActiveStatus = (id: number) => {
+        setUsers(users.map(user =>
+            user.id === id ? { ...user, active: !user.active } : user
+        ));
+    };
+
+    return (
+        <div className="App">
+            <h1>Users</h1>
+            {loading && <p>Načítám uživatele...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {!loading && !error && users.length > 0 && (
+                <UserTable users={users} onToggleActive={toggleActiveStatus} />
+            )}
+        </div>
+    );
+}
+
+export default App;
+3. Vysvětlení změn:
+Import Axios:
+
+Na začátku souboru přidáme import knihovny Axios:
+
+import axios from 'axios';  // Import Axios
+Použití Axios pro GET požadavek:
+
+Místo fetch používáme axios.get, který je synkrónní metoda pro získání dat.
+
+Axios automaticky převádí odpověď na JSON, takže není potřeba použít .json() jako u fetch.
+
+Axios vrací odpověď v objektu, který obsahuje různé informace, ale pro data použijeme response.data, což je vlastnost, která obsahuje přímo výsledná data.
+
+const response = await axios.get('http://localhost:9000/api/v1/users/all');
+setUsers(response.data); // Nastavíme uživatele
+Zbytek kódu:
+
+Kód pro zobrazení uživatelů a jejich přepínání stavu zůstává stejný, protože axios.get vrací data stejně jako fetch (požadavek na endpoint vrací seznam uživatelů).
+
+4. Co dává Axios oproti Fetch?
+Automatické převody JSON: Axios automaticky převádí JSON odpověď, zatímco u fetch je potřeba použít response.json().
+
+Lepší chybové zpracování: Axios přímo vrací chyby (například 4xx nebo 5xx chyby jsou vyhozeny jako výjimky), zatímco u fetch musíte zkontrolovat response.ok.
+
+Podpora pro POST, PUT, DELETE metody: Axios má elegantní a jednodušší rozhraní pro všechny HTTP metody.
+
+5. Co zkontrolovat v IntelliJ IDEA
+Pokud používáš IntelliJ IDEA, ujisti se, že import je správně vytvořen. IntelliJ by měl automaticky správně importovat Axios při použití import axios from 'axios'. Pokud se ti import nezobrazuje automaticky, můžeš zkontrolovat následující:
+
+Ujisti se, že jsi nainstaloval Axios pomocí příkazu npm install axios nebo yarn add axios.
+
+Pokud IntelliJ IDEA stále nemůže najít Axios, můžeš přidat import manuálně:
+
+import axios from 'axios';
+Pokud budeš mít jakékoli další dotazy nebo problémy, dej vědět!
+
+
+
+
+
+
+
+Ověřeno vpnutí crosu na této stránce:https://www.restack.io/p/spring-boot-answer-disable-cors
+
+
+
+
+
+Teoretické úkoly:
+### 1. **Proč bychom neměli ochranu CORS vypínat v produkčním prostředí?**
+
+**CORS (Cross-Origin Resource Sharing)** je mechanismus, který umožňuje nebo omezuje přístup k prostředkům na webovém serveru z jiných domén, než je doména, z které běží aplikace. Pokud by byla ochrana CORS vypnuta v produkčním prostředí, mohlo by to vést k několika problémům:
+
+- **Bezpečnostní rizika**: Kdyby CORS nebyl správně nastaven, jakýkoli klientský kód z jiných domén by mohl posílat požadavky na tvůj server. To by umožnilo útočníkovi posílat škodlivé požadavky, například využít **CSRF (Cross-Site Request Forgery)** nebo přistupovat k citlivým datům bez povolení.
+
+- **Útoky typu XSS (Cross-Site Scripting)**: Při vypnuté ochraně CORS může útočník vložit škodlivý kód na jiných stránkách a komunikovat s tvým backendem, což může vést k úniku citlivých informací nebo poškození systému.
+
+**Závěr**: CORS by měl být povolen pouze pro důvěryhodné domény a aplikace, aby se zabránilo těmto bezpečnostním hrozbám v produkčním prostředí.
+
+---
+
+### 2. **Jak nastavit Spring Boot, aby CORS vypnul/nastavil jen pro vývojové prostředí?**
+
+Pro nastavení CORS v **Spring Boot** pouze pro vývojové prostředí můžeš využít **profilů Springu** (např. `dev` pro vývoj). Můžeš nastavit globální CORS konfiguraci podle profilu, který je aktivní. Tento způsob umožňuje mít CORS aktivní pouze pro vývojové prostředí, zatímco v produkci bude více restriktivní.
+
+1. **Vytvoř CORS konfiguraci** (v případě, že chceš mít nastavení CORS specifické pro vývojové prostředí):
+
+```java
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        // Pouze pro vývojové prostředí
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000")  // Váš vývojový frontend
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*");
+    }
+}
+```
+
+2. **Pro aktivaci CORS pouze ve vývojovém prostředí** můžeš použít profilové specifikace, například v `application.properties`:
+
+V `application-dev.properties`:
+
+```properties
+spring.profiles.active=dev
+```
+
+A pak ve třídě `WebConfig` přidáš profil:
+
+```java
+@Configuration
+@Profile("dev")  // Pouze pro profil "dev"
+public class DevWebConfig implements WebMvcConfigurer {
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*");
+    }
+}
+```
+
+---
+
+### 3. **V čem je Fetch API odlišné od Axios API? Jaké jsou výhody a nevýhody obou přístupů?**
+
+#### **Fetch API**
+- **Výhody**:
+  - Je součástí standardu pro moderní prohlížeče, takže není potřeba instalovat externí knihovnu.
+  - Má jednoduché a flexibilní rozhraní pro základní operace.
+  - Možnost použití asynchronního `async/await`.
+
+- **Nevýhody**:
+  - **Není automatické parsování JSON**: Při použití `fetch` musíš manuálně volat `.json()` na odpovědi.
+  - **Chybové zpracování**: `fetch` nevyhodí chybu pro HTTP chyby (např. 404 nebo 500). Musíš to kontrolovat ručně.
+  - **Chybí podpora pro některé HTTP metody (např. PUT)**: Pro složitější požadavky musíš použít `fetch` s příslušnou konfigurací.
+
+#### **Axios**
+- **Výhody**:
+  - **Automatické parsování JSON**: Odpověď je automaticky parsována na JSON, což šetří čas a kód.
+  - **Chybové zpracování**: Axios automaticky vyhodí chybu pro HTTP chyby (např. 404, 500).
+  - **Možnost přidání timeoutu** a dalších konfigurací velmi jednoduše.
+  - **Podpora pro `POST`, `PUT`, `DELETE`** metody.
+  - Podporuje i **interceptory** pro předzpracování nebo manipulaci s požadavky nebo odpověďmi.
+
+- **Nevýhody**:
+  - Potřebuješ instalovat externí knihovnu (pokud již není součástí).
+  - Je to větší knihovna, než `fetch`.
+
+#### **Shrnutí**:
+- **Fetch** je lehčí a součástí standardu prohlížeče, ale je trochu méně pohodlný pro složitější operace.
+- **Axios** je robustnější, má více funkcí, lepší chybové zpracování a je vhodný pro komplexnější požadavky.
+
+---
+
+### 4. **V čem je výhodné použít závislost Tanstack Query?**
+
+**Tanstack Query** (dříve známý jako React Query) je knihovna pro správu dat a stavů v aplikacích, která se zaměřuje na **asynchronní dotazy** a jejich správu. Je vhodná pro aplikace, které provádí hodně asynchronních operací (např. volání API). Hlavní výhody jsou:
+
+1. **Automatické cachování**:
+   - Tanstack Query automaticky cachuje data, což znamená, že data, která byla načtena jednou, nebudou načítána znovu, pokud se nezmění.
+
+2. **Zjednodušení asynchronní logiky**:
+   - Tanstack Query výrazně zjednodušuje správu stavů, jako je **loading, error** a **success** stav při načítání dat z API.
+
+3. **Revalidace dat**:
+   - Knihovna automaticky provádí revalidaci (opětovné získání dat) v případě, že je potřeba, což znamená, že data jsou vždy čerstvá, aniž by bylo nutné psát vlastní logiku pro zajištění správnosti dat.
+
+4. **Automatické aktualizace**:
+   - Pokud dojde ke změně na serveru, Tanstack Query může automaticky aktualizovat UI, což zjednodušuje práci s dynamickými daty.
+
+5. **Podpora pro pagination a infinite scrolling**:
+   - Tanstack Query má integrovanou podporu pro pokročilé scénáře, jako jsou **pagination** (rozdělování dat na více stran) nebo **infinite scrolling** (nekonečné rolování).
+
+6. **Funkce pro synchronní dotazy**:
+   - Můžeš provádět synchronní i paralelní dotazy, což je užitečné pro komplexní aplikace s více zdroji dat.
+
+7. **Vylepšené chybové zpracování**:
+   - Umožňuje snadné zpracování chyb během načítání dat a jejich efektivní zobrazení v UI.
+
+8. **Pohodlné refetching (opětovné načítání dat)**:
+   - Tanstack Query poskytuje funkce pro snadné opětovné načítání dat (refetching) a synchronizaci mezi různými částmi aplikace.
+
+**Závěr**:
+Použití Tanstack Query ti ušetří spoustu času při implementaci asynchronní logiky a poskytuje skvělou kontrolu nad stavy, které se vztahují k asynchronním operacím, jako je načítání dat z API.

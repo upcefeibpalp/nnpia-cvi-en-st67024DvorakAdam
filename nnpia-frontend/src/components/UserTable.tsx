@@ -9,7 +9,7 @@ interface User {
 
 interface UserTableProps {
     users: User[];
-    onToggleActive: (id: number) => void;
+    onToggleActive: (id: number, currentStatus: boolean) => void;  // Opravený typ
 }
 
 const UserTable: React.FC<UserTableProps> = ({ users, onToggleActive }) => {
@@ -34,7 +34,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, onToggleActive }) => {
                                 <Button
                                     variant="contained"
                                     color={user.active ? 'secondary' : 'primary'}
-                                    onClick={() => onToggleActive(user.id)}
+                                    onClick={() => onToggleActive(user.id, user.active)} // Opravené předání dvou argumentů
                                 >
                                     {user.active ? 'Deactivate' : 'Activate'}
                                 </Button>

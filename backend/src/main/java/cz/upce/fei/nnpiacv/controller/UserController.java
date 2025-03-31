@@ -173,4 +173,49 @@ public class UserController {
         // Jinak vrátíme seznam uživatelů s HTTP status 200 OK
         return ResponseEntity.ok(userResponseDtos);
     }
+
+    // Endpoint pro změnu stavu 'active' na true
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<?> activateUser(@PathVariable Long id) {
+        log.info("Activating user with id {}", id);
+
+        // Zavolání metody ve službě pro změnu stavu 'active' na true
+        User updatedUser = userService.activateUser(id);
+
+        if (updatedUser == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with id " + id + " not found.");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                UserResponseDto.builder()
+                        .id(updatedUser.getId())
+                        .email(updatedUser.getEmail())
+                        .password(updatedUser.getPassword())
+                        .active(updatedUser.isActive())  // Vrácení nové hodnoty 'active'
+                        .build()
+        );
+    }
+
+    // Endpoint pro změnu stavu 'active' na false
+    @PostMapping("/{id}/deactivate")
+    public ResponseEntity<?> deactivateUser(@PathVariable Long id) {
+        log.info("Deactivating user with id {}", id);
+
+        // Zavolání metody ve službě pro změnu stavu 'active' na false
+        User updatedUser = userService.deactivateUser(id);
+
+        if (updatedUser == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with id " + id + " not found.");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                UserResponseDto.builder()
+                        .id(updatedUser.getId())
+                        .email(updatedUser.getEmail())
+                        .password(updatedUser.getPassword())
+                        .active(updatedUser.isActive())  // Vrácení nové hodnoty 'active'
+                        .build()
+        );
+    }
+
 }

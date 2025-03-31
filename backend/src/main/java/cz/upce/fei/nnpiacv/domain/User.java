@@ -31,4 +31,10 @@ public class User {
         this.password = password;
         this.active = true;
     }
+    public User(String email, String password, boolean active) {
+        this.email = email;
+        this.password = password;
+        this.active = active;
+    }
+
 }

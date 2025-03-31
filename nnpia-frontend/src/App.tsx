@@ -1,5 +1,6 @@
-import './App.css'
+import './App.css';
 import { useState, useEffect } from "react";
+import axios from 'axios'; // Import Axios
 import UserTable from './components/UserTable';
 
 function App() {
@@ -12,19 +13,11 @@ function App() {
         setLoading(true); // Začneme načítat
         setError(null); // Resetujeme chybu
         try {
-            const response = await fetch('http://localhost:9000/api/v1/users/all', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            // Axios GET požadavek
+            const response = await axios.get('http://localhost:9000/api/v1/users/all');
 
-            if (!response.ok) {
-                throw new Error('Chyba při načítání uživatelů');
-            }
-
-            const data = await response.json();
-            setUsers(data); // Uložíme uživatele do stavu
+            // Uložíme uživatele do stavu
+            setUsers(response.data);
         } catch (err) {
             setError('Chyba při volání endpointu');
         } finally {
@@ -37,11 +30,43 @@ function App() {
         fetchUsers();
     }, []);
 
-    // Funkce pro přepnutí stavu uživatele
-    const toggleActiveStatus = (id: number) => {
-        setUsers(users.map(user =>
-            user.id === id ? { ...user, active: !user.active } : user
-        ));
+    // Funkce pro aktivaci uživatele
+    const activateUser = async (id: number) => {
+        try {
+            // Axios POST požadavek pro aktivaci uživatele
+            await axios.post(`http://localhost:9000/api/v1/users/${id}/activate`);
+
+            // Aktualizujeme stav uživatele na frontendové straně
+            setUsers(users.map(user =>
+                user.id === id ? { ...user, active: true } : user
+            ));
+        } catch (err) {
+            setError('Chyba při aktivaci uživatele');
+        }
+    };
+
+    // Funkce pro deaktivaci uživatele
+    const deactivateUser = async (id: number) => {
+        try {
+            // Axios POST požadavek pro deaktivaci uživatele
+            await axios.post(`http://localhost:9000/api/v1/users/${id}/deactivate`);
+
+            // Aktualizujeme stav uživatele na frontendové straně
+            setUsers(users.map(user =>
+                user.id === id ? { ...user, active: false } : user
+            ));
+        } catch (err) {
+            setError('Chyba při deaktivaci uživatele');
+        }
+    };
+
+    // Funkce pro přepnutí stavu uživatele (pro UI)
+    const toggleActiveStatus = (id: number, currentStatus: boolean) => {
+        if (currentStatus) {
+            deactivateUser(id); // Deaktivujeme uživatele, pokud je aktivní
+        } else {
+            activateUser(id); // Aktivujeme uživatele, pokud není aktivní
+        }
     };
 
     return (
