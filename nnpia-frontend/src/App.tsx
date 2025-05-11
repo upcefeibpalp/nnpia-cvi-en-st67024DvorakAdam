@@ -77,6 +77,37 @@ function App() {
             {!loading && !error && users.length > 0 && (
                 <UserTable users={users} onToggleActive={toggleActiveStatus} />
             )}
+
+            <Router>
+      <div className="min-h-screen bg-gray-100">
+        <nav className="bg-white shadow">
+          <div className="container mx-auto px-4 py-3">
+            <div className="flex space-x-4">
+              <Link 
+                to="/users" 
+                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Seznam uživatelů
+              </Link>
+              <Link 
+                to="/register" 
+                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Registrovat uživatele
+              </Link>
+            </div>
+          </div>
+        </nav>
+
+        <div className="container mx-auto px-4 py-8">
+          <Routes>
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/" element={<UsersPage />} />
+          </Routes>
+        </div>
+      </div>
+    </Router>
         </div>
     );
 }
